@@ -175,3 +175,11 @@ CREATE TABLE Cart_Items (
     FOREIGN KEY (user_id) REFERENCES Users(user_id), -- Quan hệ 1:1 nên dùng user_id thay vì cart_id
     FOREIGN KEY (book_id) REFERENCES Books(book_id)
 );
+
+CREATE TABLE `invalidated_token` (
+    `id` varchar(255) NOT NULL,
+    `expiry_time` datetime(6) DEFAULT NULL
+);
+
+
+CREATE EVENT delete_expired_rows ON SCHEDULE EVERY 1 DAY DO DELETE FROM invalidated_token WHERE expiry_time < NOW();

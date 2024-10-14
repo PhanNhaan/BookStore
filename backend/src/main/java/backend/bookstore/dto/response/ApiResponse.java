@@ -13,7 +13,8 @@ import org.springframework.http.HttpStatusCode;
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ApiResponse<T> {
-    private int code;
+    @Builder.Default
+    private int code  = 1000;
     private String message;
     private HttpStatusCode statusCode;
     private T result;
