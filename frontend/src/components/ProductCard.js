@@ -1,19 +1,30 @@
-import React from "react";
-import { Card, CardContent, CardMedia, Typography, Button } from "@mui/material";
+import React from 'react';
+import { Card, CardContent, CardMedia, Typography, Button } from '@mui/material';
 
 const ProductCard = ({ product, addToCart }) => {
   return (
-    <Card>
-      <CardMedia component="img" height="140" image={product.image} alt={product.name} />
-      <CardContent>
-        <Typography gutterBottom variant="h5" component="div">
+    <Card className="product-card" sx={{ maxWidth: 220, margin: 'auto', height: '100%' }}>
+      <CardMedia
+        component="img"
+        height="140"
+        image={product.image || '/path/to/placeholder.jpg'}
+        alt={product.name}
+      />
+      <CardContent sx={{ padding: '10px' }}>
+        <Typography gutterBottom variant="h6" component="div" sx={{ fontSize: '16px' }}>
           {product.name}
         </Typography>
-        <Typography variant="body2" color="text.secondary">
+        <Typography variant="body2" color="text.secondary" sx={{ fontSize: '12px', marginBottom: '8px' }}>
           {product.category}
         </Typography>
-        <Typography variant="h6">{product.price}₫</Typography>
-        <Button variant="contained" color="primary" onClick={() => addToCart(product)}>
+        <Typography variant="h6" sx={{ fontSize: '14px', marginBottom: '12px' }}>
+          {product.price.toLocaleString()} ₫
+        </Typography>
+        <Button
+          variant="contained"
+          sx={{ bgcolor: '#2e7d32', borderRadius: '20px', width: '100%', fontSize: '12px', padding: '6px' }}
+          onClick={() => addToCart(product)}
+        >
           Thêm vào giỏ hàng
         </Button>
       </CardContent>
