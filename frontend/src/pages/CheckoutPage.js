@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Button, TextField, Typography, Card, CardContent, Grid } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
-const CheckoutPage = ({ cart, userProfile }) => {
+const CheckoutPage = ({ cart, userProfile, setCart, addOrderToHistory }) => {
   const [shippingInfo, setShippingInfo] = useState({
     name: '',
     phone: '',
     address: '',
     email: '',
   });
-
   const [errors, setErrors] = useState({});
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (userProfile) {
@@ -29,11 +30,9 @@ const CheckoutPage = ({ cart, userProfile }) => {
 
   const validateForm = () => {
     const newErrors = {};
-
     if (!shippingInfo.name || shippingInfo.name.length < 2) {
       newErrors.name = "Tên không hợp lệ. Tên phải có ít nhất 2 ký tự.";
     }
-
 
     const phoneRegex = /^[0-9]{9,11}$/;
     if (!phoneRegex.test(shippingInfo.phone)) {
@@ -45,15 +44,15 @@ const CheckoutPage = ({ cart, userProfile }) => {
       newErrors.email = "Email không hợp lệ. Vui lòng nhập đúng định dạng.";
     }
 
-
     if (!shippingInfo.address) {
       newErrors.address = "Địa chỉ không được để trống.";
     }
 
     setErrors(newErrors);
-
     return Object.keys(newErrors).length === 0;
   };
+
+  const totalAmount = cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
 
   const handleCheckout = () => {
     if (cart.length === 0) {
@@ -62,13 +61,27 @@ const CheckoutPage = ({ cart, userProfile }) => {
     }
 
     if (validateForm()) {
-      alert('Thông tin thanh toán đã được gửi!');
+      const order = {
+        id: new Date().getTime(),
+        date: new Date().toLocaleDateString(),
+        totalAmount: totalAmount,
+        items: [...cart],
+      };
+
+      const existingOrders = JSON.parse(localStorage.getItem('orderHistory')) || [];
+      const updatedOrders = [...existingOrders, order];
+      localStorage.setItem('orderHistory', JSON.stringify(updatedOrders));
+
+      addOrderToHistory(order);
+
+
+      setCart([]);
+
+      navigate('/order-confirmation', { state: { order } });
     } else {
       alert('Vui lòng kiểm tra lại thông tin nhập vào.');
     }
   };
-
-  const totalAmount = cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
 
   return (
     <Box sx={{ mt: 5, maxWidth: '1200px', margin: '0 auto' }}>
@@ -162,9 +175,9 @@ const CheckoutPage = ({ cart, userProfile }) => {
               color="primary"
               onClick={handleCheckout}
               sx={{ bgcolor: '#2e7d32' }}
-              disabled={cart.length === 0}  
+              disabled={cart.length === 0}
             >
-              Thanh Toán
+              Xác nhận đơn hàng
             </Button>
           </Box>
         </CardContent>

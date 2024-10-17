@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Typography, TextField, Button, Card, CardContent, Grid } from '@mui/material';
-
 const ProfilePage = ({ userProfile, setUserProfile }) => {
   const [profileData, setProfileData] = useState({
     name: '',
