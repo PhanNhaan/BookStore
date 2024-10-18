@@ -39,7 +39,7 @@ public class AuthenticationService {
 
     @Value("${jwt.signerKey}")
     private String SECRET_KEY;
-    private final long JWT_EXPIRATION = 1000*30;// 1000 * 60 * 60 * 24 ;
+    private final long JWT_EXPIRATION = 1000 * 60 * 60 * 24 ;
     private final long REFRESHABLE_DURATION = 1000 * 60 * 60 * 24*3 ;
 
     //get data token
