@@ -1,10 +1,12 @@
 package backend.bookstore.mapper;
 
 import backend.bookstore.dto.request.UserCreationRequest;
+import backend.bookstore.dto.request.UserUpdateRequest;
 import backend.bookstore.dto.response.LoginResponse;
 import backend.bookstore.dto.response.UserResponse;
 import backend.bookstore.model.User;
 import org.mapstruct.Mapper;
+import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = "spring")
 public interface UserMapper {
@@ -14,5 +16,6 @@ public interface UserMapper {
 
     LoginResponse toLoginResponse(User user);
 
-//    void LoginUser(@MappingTarget User user, User user);
+//    @Mapping(target = "roles", ignore = true)
+    void updateUser(@MappingTarget User user, UserUpdateRequest request);
 }
