@@ -3,10 +3,10 @@ import { Card, CardContent, CardMedia, Typography, Button } from '@mui/material'
 
 const ProductCard = ({ product, addToCart }) => {
   return (
-    <Card className="product-card" sx={{ maxWidth: 220, margin: 'auto', height: '100%' }}>
+    <Card className="product-card" sx={{ maxWidth: 220, margin: 'auto', height: '100%', transition: '0.3s', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
       <CardMedia
         component="img"
-        height="140"
+        height="200"
         image={product.image || '/path/to/placeholder.jpg'}
         alt={product.name}
       />
@@ -25,7 +25,7 @@ const ProductCard = ({ product, addToCart }) => {
           sx={{ bgcolor: '#2e7d32', borderRadius: '20px', width: '100%', fontSize: '12px', padding: '6px' }}
           onClick={() => addToCart(product)}
         >
-          Thêm vào giỏ hàng
+          Add to Cart
         </Button>
       </CardContent>
     </Card>

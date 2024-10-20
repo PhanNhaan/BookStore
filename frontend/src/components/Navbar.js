@@ -1,16 +1,14 @@
-import React, { useState, useCallback, useEffect } from 'react';
-import { AppBar, Toolbar, Typography, Box, Button, IconButton, Badge, Menu, MenuItem, InputBase } from '@mui/material';
-import { AccountCircle, ShoppingCart, Search } from '@mui/icons-material';
+import React, { useState } from 'react';
+import { AppBar, Toolbar, Typography, Box, Button, IconButton, Badge, InputBase } from '@mui/material';
+import { ShoppingCart, Search as SearchIcon } from '@mui/icons-material';
 import { Link, useNavigate } from 'react-router-dom';
-import debounce from 'lodash.debounce'; 
-import CartDropdown from './CartDropdown'; 
+import CartDropdown from './CartDropdown';
+import UserMenu from './UserMenu';
 
-const Navbar = ({
-  isAuthenticated, setIsAuthenticated, userProfile, totalItemsInCart, cart, setFilteredProducts, products,
-}) => {
+const Navbar = ({ isAuthenticated, setIsAuthenticated, userProfile, totalItemsInCart, cart, removeFromCart }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
-  const [isCartOpen, setIsCartOpen] = useState(false); 
+  const [isCartOpen, setIsCartOpen] = useState(false);
   const navigate = useNavigate();
 
   const handleMenuOpen = (event) => setAnchorEl(event.currentTarget);
@@ -24,37 +22,30 @@ const Navbar = ({
     handleMenuClose();
   };
 
-  const debouncedSearch = useCallback(
-    debounce((query) => {
-      const filtered = products.filter((product) =>
-        product.name.toLowerCase().includes(query.toLowerCase())
-      );
-      setFilteredProducts(filtered);
-    }, 300),
-    [products, setFilteredProducts]
-  );
-
   const handleSearchChange = (e) => {
     const query = e.target.value;
     setSearchQuery(query);
-    debouncedSearch(query);
+    navigate(`/books?search=${query}`);
   };
 
- 
-  useEffect(() => {
-    if (cart.length > 0) {
-      setIsCartOpen(true); 
-    }
-  }, [cart]);
+  const viewCart = () => {
+    navigate('/cart');
+    setIsCartOpen(false);
+  };
+
+  const checkout = () => {
+    navigate('/checkout');
+    setIsCartOpen(false);
+  };
 
   return (
-    <AppBar position="static" sx={{ backgroundColor: '#2e7d32', padding: '0 20px' }}>
+    <AppBar position="fixed" sx={{ backgroundColor: '#2e7d32', padding: '0 20px', boxShadow: '0 2px 10px rgba(0,0,0,0.1)' }}>
       <Toolbar>
         <Typography
           variant="h6"
           component={Link}
           to="/"
-          sx={{ flexGrow: 1, color: 'inherit', textDecoration: 'none' }}
+          sx={{ flexGrow: 1, color: 'inherit', textDecoration: 'none', fontWeight: 'bold' }}
         >
           BOOK STORE
         </Typography>
@@ -63,60 +54,60 @@ const Navbar = ({
           sx={{
             display: 'flex',
             alignItems: 'center',
-            backgroundColor: 'white',
-            borderRadius: '8px',
-            padding: '2px 8px',
-            marginRight: '16px',
-            width: '300px',
+            backgroundColor: '#f1f3f4',
+            borderRadius: '50px',
+            padding: '5px 20px',
+            maxWidth: '400px',
+            width: '100%',
+            boxShadow: '0px 2px 6px rgba(0, 0, 0, 0.1)',
+            marginRight: '20px',
           }}
         >
-          <Search />
+          <SearchIcon sx={{ color: '#555' }} />
           <InputBase
             placeholder="Tìm kiếm sản phẩm..."
             value={searchQuery}
             onChange={handleSearchChange}
-            sx={{ marginLeft: '8px', flex: 1 }}
+            sx={{ marginLeft: '10px', flex: 1 }}
           />
         </Box>
 
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
           <Button sx={{ color: '#fff' }} component={Link} to="/">
-            TRANG CHỦ
+            Trang chủ
           </Button>
           <Button sx={{ color: '#fff' }} component={Link} to="/books">
-            SÁCH - TRUYỆN TRANH
+            Sách - Truyện tranh
           </Button>
-
-          <Box>
+          <Box sx={{ position: 'relative' }}>
             <IconButton color="inherit" onClick={() => setIsCartOpen(!isCartOpen)}>
               <Badge badgeContent={totalItemsInCart} color="error">
                 <ShoppingCart />
               </Badge>
             </IconButton>
-            {isCartOpen && <CartDropdown cart={cart} closeCart={() => setIsCartOpen(false)} />} {/* Render Cart Dropdown */}
+            {isCartOpen && (
+              <CartDropdown
+                cart={cart}
+                removeFromCart={removeFromCart}
+                viewCart={viewCart}
+                checkout={checkout}
+              />
+            )}
           </Box>
+          <Button sx={{ color: '#fff' }} component={Link} to="/checkout">
+            Thanh toán
+          </Button>
 
-          {isAuthenticated && (
-            <>
-              <Button sx={{ color: '#fff' }} component={Link} to="/checkout">
-                THANH TOÁN
-              </Button>
-              <Button sx={{ color: '#fff' }} component={Link} to="/orders">
-                LỊCH SỬ ĐƠN HÀNG
-              </Button>
-            </>
-          )}
+         
 
           {isAuthenticated ? (
-            <>
-              <IconButton color="inherit" onClick={handleMenuOpen}>
-                <AccountCircle />
-              </IconButton>
-              <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
-                <MenuItem component={Link} to="/profile">Hồ sơ của tôi</MenuItem>
-                <MenuItem onClick={handleLogout}>Đăng xuất</MenuItem>
-              </Menu>
-            </>
+            <UserMenu
+              anchorEl={anchorEl}
+              handleMenuOpen={handleMenuOpen}
+              handleMenuClose={handleMenuClose}
+              handleLogout={handleLogout}
+              userProfile={userProfile}
+            />
           ) : (
             <Button sx={{ color: '#fff' }} component={Link} to="/login">
               Đăng nhập
