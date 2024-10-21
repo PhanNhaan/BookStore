@@ -1,4 +1,3 @@
-// data/products.js
 export const products = [
     { id: 1, name: 'Sách học Python', category: 'Công nghệ thông tin', price: 120000, image: '/images/python.jpg' },
     { id: 2, name: 'Tâm lý học tội phạm', category: 'Tâm lý học', price: 150000, image: '/images/tamly.jpg' },
