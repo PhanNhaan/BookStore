@@ -12,6 +12,7 @@ import com.nimbusds.jose.JWSVerifier;
 import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.SignedJWT;
 import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,6 +58,7 @@ public class AuthenticationService {
     public String generateToken(User userDetails){
         return generateToken(new HashMap<>(),userDetails);
     }
+
     public String generateToken(Map<String,Object> extraClaims, User userDetails){
         Date expirationDate = new Date(System.currentTimeMillis() + JWT_EXPIRATION);
 
@@ -67,7 +69,8 @@ public class AuthenticationService {
                 .setExpiration(expirationDate)
                 .setId(UUID.randomUUID().toString())
                 .claim("scope", userDetails.getRole())//add claim
-                .signWith(SignatureAlgorithm.HS256, SECRET_KEY.getBytes())//sign secret key
+//                .signWith(SignatureAlgorithm.HS256, SECRET_KEY.getBytes())//sign secret key
+                .signWith(Keys.hmacShaKeyFor(SECRET_KEY.getBytes()), SignatureAlgorithm.HS256)
                 .compact();
     }
 
