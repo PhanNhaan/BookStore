@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Grid, Typography, Card, CardMedia, CardContent, Button, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
+import { Box, Grid, Typography, Card, CardMedia, CardContent, Button, FormControl, InputLabel, Select, MenuItem, Chip } from '@mui/material';
 import { Star, StarBorder, StarHalf } from '@mui/icons-material';
 import { Link, useLocation } from 'react-router-dom';
 import booksData from '../data/booksData';
 
-const genres = ['All', 'Fantasy', 'Classics', 'Dystopian'];
+const genres = ['All', 'Fantasy', 'Classics', 'Dystopian', 'Romance'];
 const sortingOptions = ['Price: Low to High', 'Price: High to Low', 'Newest', 'Oldest'];
 
 const calculateAverageRating = (reviews) => {
@@ -50,7 +50,7 @@ const BookPage = ({ addToCart }) => {
 
     if (query) {
       filteredBooks = filteredBooks.filter((book) =>
-        book.title.toLowerCase().includes(query.toLowerCase()) ||
+        book.name.toLowerCase().includes(query.toLowerCase()) ||
         book.author.toLowerCase().includes(query.toLowerCase()) ||
         book.genre.toLowerCase().includes(query.toLowerCase())
       );
@@ -87,8 +87,28 @@ const BookPage = ({ addToCart }) => {
     sortBooks(option);
   };
 
+  const handleAddToCart = (book) => {
+    if (book.stock > 0) {
+      addToCart({ ...book, price: book.price * (1 - book.discount / 100) });
+      updateStock(book.id, -1);
+    } else if (book.preOrder) {
+      alert('Sản phẩm hiện hết hàng nhưng có thể đặt trước.');
+      addToCart({ ...book, preOrder: true });
+    } else {
+      alert('Sản phẩm hiện đã hết hàng.');
+    }
+  };
+
+  const updateStock = (bookId, change) => {
+    setBooks((prevBooks) =>
+      prevBooks.map((book) =>
+        book.id === bookId ? { ...book, stock: book.stock + change } : book
+      )
+    );
+  };
+
   return (
-    <Box sx={{ p: 3, backgroundColor: '#f4f6f8', minHeight: '100vh', pt: '100px', paddingTop: '70px' }}>
+    <Box sx={{ p: 3, backgroundColor: '#f4f6f8', minHeight: '100vh', paddingTop: '80px' }}>
       <Typography 
         variant="h4" 
         sx={{ mb: 4, textAlign: 'center', fontWeight: 'bold', color: '#2e7d32' }}
@@ -121,9 +141,10 @@ const BookPage = ({ addToCart }) => {
       </Box>
 
       <Grid container spacing={3}>
-        {Array.isArray(books) && books.length > 0 ? (
+        {books.length > 0 ? (
           books.map((book) => {
             const averageRating = calculateAverageRating(book.reviews);
+            const discountedPrice = book.discount ? book.price * (1 - book.discount / 100) : book.price;
             return (
               <Grid item key={book.id} xs={12} sm={6} md={4} lg={3}>
                 <Card
@@ -143,7 +164,7 @@ const BookPage = ({ addToCart }) => {
                     component="img"
                     sx={{ height: 200, objectFit: 'contain', borderBottom: '1px solid #ddd' }}
                     image={book.image}
-                    alt={book.title}
+                    alt={book.name}
                   />
                   <CardContent sx={{ flexGrow: 1 }}>
                     <Typography
@@ -152,7 +173,7 @@ const BookPage = ({ addToCart }) => {
                       variant="h6"
                       sx={{ fontWeight: 'bold', textDecoration: 'none', color: '#2e7d32' }}
                     >
-                      {book.title}
+                      {book.name}
                     </Typography>
                     <Typography variant="body2" color="textSecondary">
                       Tác giả: {book.author}
@@ -169,9 +190,20 @@ const BookPage = ({ addToCart }) => {
                         {averageRating.toFixed(1)} / 5
                       </Typography>
                     </Box>
+                    {book.discount > 0 && (
+                      <Chip label={`Giảm ${book.discount}%`} color="error" sx={{ mt: 2 }} />
+                    )}
                     <Typography variant="h6" sx={{ color: '#2e7d32', fontWeight: 'bold', mt: 2 }}>
-                      {book.price.toLocaleString()} ₫
+                      {discountedPrice.toLocaleString()} ₫
                     </Typography>
+                    {book.discount > 0 && (
+                      <Typography
+                        variant="body2"
+                        sx={{ textDecoration: 'line-through', color: '#999', mt: 1 }}
+                      >
+                        {book.price.toLocaleString()} ₫
+                      </Typography>
+                    )}
                   </CardContent>
                   <Button
                     variant="contained"
@@ -184,9 +216,10 @@ const BookPage = ({ addToCart }) => {
                         backgroundColor: '#1b5e20',
                       },
                     }}
-                    onClick={() => addToCart(book)}
+                    onClick={() => handleAddToCart(book)}
+                    disabled={book.stock === 0 && !book.preOrder}
                   >
-                    Thêm vào giỏ
+                    {book.stock > 0 ? 'Thêm vào giỏ hàng' : book.preOrder ? 'Đặt trước' : 'Hết hàng'}
                   </Button>
                 </Card>
               </Grid>

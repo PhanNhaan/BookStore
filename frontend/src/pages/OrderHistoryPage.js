@@ -1,29 +1,113 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Typography, Card, CardContent, Button, Divider } from '@mui/material';
+import {
+  Box,
+  Typography,
+  Card,
+  CardContent,
+  Button,
+  Divider,
+  TextField,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  Select,
+} from '@mui/material';
 import { Link } from 'react-router-dom';
+import dayjs from 'dayjs';
+
+const statuses = ['Tất cả', 'Đang xử lý', 'Đã giao', 'Đã hủy'];
 
 const OrderHistoryPage = () => {
   const [orderHistory, setOrderHistory] = useState([]);
+  const [filteredOrders, setFilteredOrders] = useState([]);
+  const [selectedStatus, setSelectedStatus] = useState('Tất cả');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
 
   useEffect(() => {
     const savedOrders = JSON.parse(localStorage.getItem('orderHistory')) || [];
     setOrderHistory(savedOrders);
+    setFilteredOrders(savedOrders);
   }, []);
+
+  const handleStatusChange = (event) => {
+    setSelectedStatus(event.target.value);
+    filterOrders(event.target.value, startDate, endDate);
+  };
+
+  const handleStartDateChange = (event) => {
+    setStartDate(event.target.value);
+    filterOrders(selectedStatus, event.target.value, endDate);
+  };
+
+  const handleEndDateChange = (event) => {
+    setEndDate(event.target.value);
+    filterOrders(selectedStatus, startDate, event.target.value);
+  };
+
+  const filterOrders = (status, start, end) => {
+    let filtered = [...orderHistory];
+
+    if (status !== 'Tất cả') {
+      filtered = filtered.filter((order) => order.status === status);
+    }
+
+    if (start) {
+      const startDate = dayjs(start);
+      filtered = filtered.filter((order) => dayjs(order.date).isAfter(startDate.subtract(1, 'day')));
+    }
+
+    if (end) {
+      const endDate = dayjs(end);
+      filtered = filtered.filter((order) => dayjs(order.date).isBefore(endDate.add(1, 'day')));
+    }
+
+    setFilteredOrders(filtered);
+  };
 
   return (
     <Box sx={{ mt: 16, maxWidth: '900px', margin: '0 auto', px: 2, paddingTop: '70px' }}>
-  <Typography
-    variant="h4"
-    sx={{ textAlign: 'center', mb: 4, fontWeight: 'bold', color: '#2e7d32' }}
-  >
-    Lịch Sử Đơn Hàng
-  </Typography>
-      {orderHistory.length === 0 ? (
+      <Typography
+        variant="h4"
+        sx={{ textAlign: 'center', mb: 4, fontWeight: 'bold', color: '#2e7d32' }}
+      >
+        Lịch Sử Đơn Hàng
+      </Typography>
+
+      <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mb: 4 }}>
+        <FormControl sx={{ minWidth: '150px' }}>
+          <InputLabel>Trạng thái</InputLabel>
+          <Select value={selectedStatus} onChange={handleStatusChange} label="Trạng thái">
+            {statuses.map((status) => (
+              <MenuItem key={status} value={status}>
+                {status}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+
+        <TextField
+          label="Từ ngày"
+          type="date"
+          value={startDate}
+          onChange={handleStartDateChange}
+          InputLabelProps={{ shrink: true }}
+        />
+        <TextField
+          label="Đến ngày"
+          type="date"
+          value={endDate}
+          onChange={handleEndDateChange}
+          InputLabelProps={{ shrink: true }}
+        />
+      </Box>
+
+      {filteredOrders.length === 0 ? (
         <Typography variant="h6" sx={{ textAlign: 'center', color: 'red' }}>
-          Bạn chưa có đơn hàng nào.
+          Không có đơn hàng nào phù hợp với bộ lọc.
         </Typography>
       ) : (
-        orderHistory.map((order) => (
+        filteredOrders.map((order) => (
           <Card
             key={order.id}
             sx={{
@@ -39,19 +123,16 @@ const OrderHistoryPage = () => {
               <Typography variant="subtitle1" sx={{ mb: 2 }}>
                 Ngày đặt: {order.date}
               </Typography>
-              <Typography
-                variant="h6"
-                sx={{ mb: 2, color: '#2e7d32', fontWeight: 'bold' }}
-              >
+              <Typography variant="body2" sx={{ mb: 2, fontWeight: 'bold', color: '#2e7d32' }}>
+                Trạng thái: {order.status}
+              </Typography>
+              <Typography variant="h6" sx={{ mb: 2, color: '#2e7d32', fontWeight: 'bold' }}>
                 Tổng tiền: {order.totalAmount.toLocaleString()} ₫
               </Typography>
 
               {order.shippingInfo && (
                 <>
-                  <Typography
-                    variant="subtitle1"
-                    sx={{ fontWeight: 'bold', color: '#333', mb: 1 }}
-                  >
+                  <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: '#333', mb: 1 }}>
                     Thông tin giao hàng:
                   </Typography>
                   <Box sx={{ pl: 2 }}>
@@ -69,10 +150,7 @@ const OrderHistoryPage = () => {
                 </>
               )}
 
-              <Typography
-                variant="subtitle1"
-                sx={{ fontWeight: 'bold', color: '#333', mb: 1 }}
-              >
+              <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: '#333', mb: 1 }}>
                 Sản phẩm:
               </Typography>
               <ul style={{ paddingLeft: '20px' }}>

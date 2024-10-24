@@ -5,18 +5,22 @@ import { useNavigate } from 'react-router-dom';
 import { CSSTransition } from 'react-transition-group';
 import '../styles/transition.css';
 
-
-const CartPage = ({ cart, setCart, removeFromCart }) => {
+const CartPage = ({ cart, setCart, removeFromCart, updateStock }) => {
   const navigate = useNavigate();
-  const [inTransition, setInTransition] = useState(false); 
+  const [inTransition, setInTransition] = useState(false);
   const totalAmount = cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
 
   const handleIncrease = (productId) => {
-    setCart(
-      cart.map((item) =>
-        item.id === productId ? { ...item, quantity: item.quantity + 1 } : item
-      )
-    );
+    const product = cart.find((item) => item.id === productId);
+    if (product.stock > product.quantity) {
+      setCart(
+        cart.map((item) =>
+          item.id === productId ? { ...item, quantity: item.quantity + 1 } : item
+        )
+      );
+    } else {
+      alert('Số lượng sản phẩm trong kho không đủ.');
+    }
   };
 
   const handleDecrease = (productId) => {
@@ -30,11 +34,11 @@ const CartPage = ({ cart, setCart, removeFromCart }) => {
   };
 
   const handleCheckout = () => {
-    setInTransition(true); 
+    setInTransition(true);
   };
 
   const onTransitionEnd = () => {
-    navigate('/checkout'); 
+    navigate('/checkout');
   };
 
   return (
@@ -74,11 +78,22 @@ const CartPage = ({ cart, setCart, removeFromCart }) => {
                     />
                     <CardContent sx={{ flex: 1 }}>
                       <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>{item.name}</Typography>
-                      <Typography variant="body2" sx={{ color: '#555' }}>Thể loại: {item.category}</Typography>
+                      <Typography variant="body2" sx={{ color: '#555' }}>Thể loại: {item.genre}</Typography>
                       <Typography variant="body1" sx={{ mt: 1, fontWeight: 'bold', color: '#2e7d32' }}>
                         {item.price.toLocaleString()} ₫
                       </Typography>
                       <Typography variant="body2" sx={{ color: '#555', mt: 1 }}>Số lượng: {item.quantity}</Typography>
+                      <Typography variant="body2" sx={{ color: '#555', mt: 1 }}>Kho còn lại: {item.stock - item.quantity}</Typography>
+                      {item.stock - item.quantity <= 5 && item.stock - item.quantity > 0 && (
+                        <Typography color="error" variant="body2">
+                          Sắp hết hàng!
+                        </Typography>
+                      )}
+                      {item.stock - item.quantity === 0 && (
+                        <Typography color="error" variant="body2">
+                          Hết hàng trong kho.
+                        </Typography>
+                      )}
                     </CardContent>
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
                       <IconButton onClick={() => handleDecrease(item.id)} sx={{ color: '#2e7d32' }}>
@@ -113,7 +128,7 @@ const CartPage = ({ cart, setCart, removeFromCart }) => {
                     bgcolor: '#1b5e20',
                   },
                 }}
-                onClick={handleCheckout} 
+                onClick={handleCheckout}
               >
                 Thanh toán
               </Button>

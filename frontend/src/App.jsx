@@ -1,5 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+  useLocation,
+} from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import PrivacyPolicy from './pages/PrivacyPolicy';
@@ -14,10 +20,10 @@ import CheckoutPage from './pages/CheckoutPage';
 import LoginPage from './pages/LoginPage';
 import OrderConfirmationPage from './pages/OrderConfirmationPage';
 import OrderHistoryPage from './pages/OrderHistoryPage';
-import OffersPage from './pages/OffersPage'; 
-import './index.css';
+import OffersPage from './pages/OffersPage';
 import RewardPage from './pages/RewardPage';
 import { products as initialProducts } from './data/products';
+import './index.css';
 import './styles/style.css';
 
 const App = () => {
@@ -33,8 +39,12 @@ const App = () => {
     return savedHistory ? JSON.parse(savedHistory) : [];
   });
 
-  const [isAuthenticated, setIsAuthenticated] = useState(() => localStorage.getItem('isAuthenticated') === 'true');
-  const [userProfile, setUserProfile] = useState(() => JSON.parse(localStorage.getItem('userProfile')) || null);
+  const [isAuthenticated, setIsAuthenticated] = useState(() =>
+    localStorage.getItem('isAuthenticated') === 'true'
+  );
+  const [userProfile, setUserProfile] = useState(() =>
+    JSON.parse(localStorage.getItem('userProfile')) || null
+  );
   const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
@@ -45,10 +55,23 @@ const App = () => {
 
   const addToCart = (product) => {
     const productInCart = cart.find((item) => item.id === product.id);
+    const discountedPrice =
+      product.price - (product.price * product.discount) / 100;
+    const cartItem = {
+      ...product,
+      price: discountedPrice,
+    };
+
     if (productInCart) {
-      setCart(cart.map((item) => item.id === product.id ? { ...productInCart, quantity: productInCart.quantity + 1 } : item));
+      setCart(
+        cart.map((item) =>
+          item.id === product.id
+            ? { ...productInCart, quantity: productInCart.quantity + 1 }
+            : item
+        )
+      );
     } else {
-      setCart([...cart, { ...product, quantity: 1 }]);
+      setCart([...cart, { ...cartItem, quantity: 1 }]);
     }
   };
 
@@ -79,11 +102,29 @@ const App = () => {
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
       />
-      
+
       <main id="main-content">
         <Routes>
-          <Route path="/" element={<Home products={filteredProducts} addToCart={addToCart} searchQuery={searchQuery} />} />
-          <Route path="/cart" element={<CartPage cart={cart} setCart={setCart} removeFromCart={removeFromCart} />} />
+          <Route
+            path="/"
+            element={
+              <Home
+                products={filteredProducts}
+                addToCart={addToCart}
+                searchQuery={searchQuery}
+              />
+            }
+          />
+          <Route
+            path="/cart"
+            element={
+              <CartPage
+                cart={cart}
+                setCart={setCart}
+                removeFromCart={removeFromCart}
+              />
+            }
+          />
           <Route
             path="/checkout"
             element={
@@ -99,12 +140,34 @@ const App = () => {
               )
             }
           />
-          <Route path="/order-confirmation" element={<OrderConfirmationPage />} />
-          <Route path="/orders" element={<OrderHistoryPage orderHistory={orderHistory} />} />
+          <Route
+            path="/order-confirmation"
+            element={<OrderConfirmationPage />}
+          />
+          <Route
+            path="/orders"
+            element={<OrderHistoryPage orderHistory={orderHistory} />}
+          />
           <Route path="/books" element={<BookPage addToCart={addToCart} />} />
-          <Route path="/books/:id" element={<BookDetailPage addToCart={addToCart} />} />
-          <Route path="/rewards" element={isAuthenticated ? <RewardPage /> : <Navigate to="/login" />} />
-          <Route path="/login" element={<LoginPage setIsAuthenticated={setIsAuthenticated} setUserProfile={setUserProfile} />} />
+          <Route
+            path="/books/:id"
+            element={<BookDetailPage addToCart={addToCart} />}
+          />
+          <Route
+            path="/rewards"
+            element={
+              isAuthenticated ? <RewardPage /> : <Navigate to="/login" />
+            }
+          />
+          <Route
+            path="/login"
+            element={
+              <LoginPage
+                setIsAuthenticated={setIsAuthenticated}
+                setUserProfile={setUserProfile}
+              />
+            }
+          />
           <Route
             path="/profile"
             element={
@@ -113,7 +176,10 @@ const App = () => {
                   userProfile={userProfile}
                   setUserProfile={(updatedProfile) => {
                     setUserProfile(updatedProfile);
-                    localStorage.setItem('userProfile', JSON.stringify(updatedProfile));
+                    localStorage.setItem(
+                      'userProfile',
+                      JSON.stringify(updatedProfile)
+                    );
                   }}
                 />
               ) : (

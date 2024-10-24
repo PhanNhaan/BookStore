@@ -79,6 +79,7 @@ const Navbar = ({ isAuthenticated, setIsAuthenticated, userProfile, totalItemsIn
           <Button sx={{ color: '#fff' }} component={Link} to="/books">
             Sách - Truyện tranh
           </Button>
+
           <Box sx={{ position: 'relative' }}>
             <IconButton color="inherit" onClick={() => setIsCartOpen(!isCartOpen)}>
               <Badge badgeContent={totalItemsInCart} color="error">
@@ -94,11 +95,13 @@ const Navbar = ({ isAuthenticated, setIsAuthenticated, userProfile, totalItemsIn
               />
             )}
           </Box>
+
           <Button sx={{ color: '#fff' }} component={Link} to="/checkout">
             Thanh toán
           </Button>
-
-         
+          <Button sx={{ color: '#fff' }} component={Link} to="/orders">
+            Lịch sử đơn hàng
+          </Button>
 
           {isAuthenticated ? (
             <UserMenu

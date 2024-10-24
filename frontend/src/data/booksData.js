@@ -1,12 +1,15 @@
 const booksData = [
   {
-    id: 1,
-    title: 'The Hobbit',
+    id: 100,
+    name: 'The Hobbit',
     author: 'J.R.R. Tolkien',
     genre: 'Fantasy',
     price: 120000,
+    discount: 10, // Giảm giá 10%
     publicationYear: 1937,
     image: 'https://via.placeholder.com/150',
+    stock: 0, // Hết hàng
+    preOrder: true, // Có thể đặt trước
     reviews: [
       {
         user: 'John Doe',
@@ -21,13 +24,16 @@ const booksData = [
     ],
   },
   {
-    id: 2,
-    title: 'To Kill a Mockingbird',
+    id: 101,
+    name: 'To Kill a Mockingbird',
     author: 'Harper Lee',
     genre: 'Classics',
     price: 150000,
+    discount: 0, // Không giảm giá
     publicationYear: 1960,
     image: 'https://via.placeholder.com/150',
+    stock: 5, // Còn hàng
+    preOrder: false, // Không cần đặt trước
     reviews: [
       {
         user: 'Alice Brown',
@@ -42,13 +48,16 @@ const booksData = [
     ],
   },
   {
-    id: 3,
-    title: '1984',
+    id: 102,
+    name: '1984',
     author: 'George Orwell',
     genre: 'Dystopian',
     price: 130000,
+    discount: 5, // Giảm giá 5%
     publicationYear: 1949,
     image: 'https://via.placeholder.com/150',
+    stock: 0, // Hết hàng
+    preOrder: true, // Có thể đặt trước
     reviews: [
       {
         user: 'Sam Wilson',
@@ -63,13 +72,16 @@ const booksData = [
     ],
   },
   {
-    id: 4,
-    title: 'Harry Potter and the Philosopher\'s Stone',
+    id: 103,
+    name: 'Harry Potter and the Philosopher\'s Stone',
     author: 'J.K. Rowling',
     genre: 'Fantasy',
     price: 200000,
+    discount: 15, // Giảm giá 15%
     publicationYear: 1997,
     image: 'https://via.placeholder.com/150',
+    stock: 10, // Còn hàng
+    preOrder: false, // Không cần đặt trước
     reviews: [
       {
         user: 'Lily Evans',
@@ -84,13 +96,16 @@ const booksData = [
     ],
   },
   {
-    id: 5,
-    title: 'Pride and Prejudice',
+    id: 104,
+    name: 'Pride and Prejudice',
     author: 'Jane Austen',
     genre: 'Romance',
     price: 100000,
+    discount: 0, // Không giảm giá
     publicationYear: 1813,
     image: 'https://via.placeholder.com/150',
+    stock: 0, // Hết hàng
+    preOrder: false, // Không thể đặt trước
     reviews: [
       {
         user: 'Elizabeth Bennet',
@@ -105,13 +120,16 @@ const booksData = [
     ],
   },
   {
-    id: 6,
-    title: 'The Great Gatsby',
+    id: 105,
+    name: 'The Great Gatsby',
     author: 'F. Scott Fitzgerald',
     genre: 'Classics',
     price: 140000,
+    discount: 10, // Giảm giá 10%
     publicationYear: 1925,
     image: 'https://via.placeholder.com/150',
+    stock: 3, // Còn hàng
+    preOrder: false, // Không cần đặt trước
     reviews: [
       {
         user: 'Nick Carraway',
@@ -126,13 +144,16 @@ const booksData = [
     ],
   },
   {
-    id: 7,
-    title: 'The Catcher in the Rye',
+    id: 106,
+    name: 'The Catcher in the Rye',
     author: 'J.D. Salinger',
     genre: 'Classics',
     price: 110000,
+    discount: 5, // Giảm giá 5%
     publicationYear: 1951,
     image: 'https://via.placeholder.com/150',
+    stock: 0, // Hết hàng
+    preOrder: false, // Không thể đặt trước
     reviews: [
       {
         user: 'Holden Caulfield',
@@ -147,13 +168,16 @@ const booksData = [
     ],
   },
   {
-    id: 8,
-    title: 'The Lord of the Rings',
+    id: 107,
+    name: 'The Lord of the Rings',
     author: 'J.R.R. Tolkien',
     genre: 'Fantasy',
     price: 250000,
+    discount: 20, // Giảm giá 20%
     publicationYear: 1954,
     image: 'https://via.placeholder.com/150',
+    stock: 2, // Còn hàng
+    preOrder: false, // Không cần đặt trước
     reviews: [
       {
         user: 'Samwise Gamgee',
@@ -168,13 +192,16 @@ const booksData = [
     ],
   },
   {
-    id: 9,
-    title: 'The Chronicles of Narnia',
+    id: 108,
+    name: 'The Chronicles of Narnia',
     author: 'C.S. Lewis',
     genre: 'Fantasy',
     price: 180000,
+    discount: 0, // Không giảm giá
     publicationYear: 1950,
     image: 'https://via.placeholder.com/150',
+    stock: 5, // Còn hàng
+    preOrder: false, // Không cần đặt trước
     reviews: [
       {
         user: 'Lucy Pevensie',
@@ -189,13 +216,16 @@ const booksData = [
     ],
   },
   {
-    id: 10,
-    title: 'Brave New World',
+    id: 109,
+    name: 'Brave New World',
     author: 'Aldous Huxley',
     genre: 'Dystopian',
     price: 135000,
+    discount: 8, // Giảm giá 8%
     publicationYear: 1932,
     image: 'https://via.placeholder.com/150',
+    stock: 0, // Hết hàng
+    preOrder: true, // Có thể đặt trước
     reviews: [
       {
         user: 'Mustapha Mond',
@@ -210,4 +240,5 @@ const booksData = [
     ],
   },
 ];
+
 export default booksData;

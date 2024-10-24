@@ -1,7 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Button, TextField, Typography, Card, CardContent, Grid, Alert } from '@mui/material';
+import { Box, Button, TextField, Typography, Card, CardContent, Grid, Alert, Radio, RadioGroup, FormControlLabel } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { addRewardPoints, applyDiscount, getDiscountCode } from '../services/rewardService';
+import { addRewardPoints, applyDiscount, getDiscountCode, updateStockAfterOrder } from '../services/rewardService';
+import { PayPalButtons, PayPalScriptProvider } from '@paypal/react-paypal-js';
+import { Elements } from '@stripe/react-stripe-js';
+import { loadStripe } from '@stripe/stripe-js';
+import StripeCheckoutForm from '../components/StripeCheckoutForm';
+
+const stripePromise = loadStripe('your_stripe_publishable_key'); // Replace with your Stripe publishable key
 
 const CheckoutPage = ({ cart, setCart, addOrderToHistory }) => {
   const [shippingInfo, setShippingInfo] = useState({
@@ -15,6 +21,8 @@ const CheckoutPage = ({ cart, setCart, addOrderToHistory }) => {
   const [discountCode, setDiscountCode] = useState('');
   const [discountApplied, setDiscountApplied] = useState(false);
   const [finalAmount, setFinalAmount] = useState(0);
+  const [paymentMethod, setPaymentMethod] = useState('cod'); // Default payment method is Cash on Delivery (COD)
+  const [isProcessingPayment, setIsProcessingPayment] = useState(false);
   const navigate = useNavigate();
 
   const totalAmount = cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
@@ -43,9 +51,9 @@ const CheckoutPage = ({ cart, setCart, addOrderToHistory }) => {
       const discountedAmount = applyDiscount(totalAmount, discountCode);
       setFinalAmount(discountedAmount);
       setDiscountApplied(true);
-      setSuccessMessage(`Mã giảm giá hợp lệ! Bạn được giảm giá 10%.`);
+      setSuccessMessage('Mã giảm giá hợp lệ! Bạn được giảm giá 10%.');
     } else {
-      setSuccessMessage(`Mã giảm giá không hợp lệ.`);
+      setSuccessMessage('Mã giảm giá không hợp lệ.');
     }
   };
 
@@ -80,32 +88,44 @@ const CheckoutPage = ({ cart, setCart, addOrderToHistory }) => {
     }
 
     if (validateForm()) {
-      const order = {
-        id: new Date().getTime(),
-        date: new Date().toLocaleDateString(),
-        totalAmount: finalAmount,
-        items: [...cart],
-        shippingInfo: { ...shippingInfo },
-      };
-
-      const existingOrders = JSON.parse(localStorage.getItem('orderHistory')) || [];
-      const updatedOrders = [...existingOrders, order];
-      localStorage.setItem('orderHistory', JSON.stringify(updatedOrders));
-
-      const pointsEarned = Math.floor(totalAmount / 10000);
-      addRewardPoints(pointsEarned);
-
-      addOrderToHistory(order);
-      setCart([]);
-
-      setSuccessMessage('Đơn hàng đã được xác nhận!');
-      setTimeout(() => {
-        setSuccessMessage('');
-        navigate('/orders');
-      }, 2000);
+      // Process payment based on the selected method
+      if (paymentMethod === 'cod') {
+        handleOrderConfirmation();
+      } else if (paymentMethod === 'paypal' || paymentMethod === 'stripe') {
+        setIsProcessingPayment(true); // Show loading or processing state during payment
+      }
     } else {
       alert('Vui lòng kiểm tra lại thông tin nhập vào.');
     }
+  };
+
+  const handleOrderConfirmation = () => {
+    const order = {
+      id: new Date().getTime(),
+      date: new Date().toLocaleDateString(),
+      totalAmount: finalAmount,
+      items: [...cart],
+      shippingInfo: { ...shippingInfo },
+      status: 'Đang xử lý',
+    };
+
+    const existingOrders = JSON.parse(localStorage.getItem('orderHistory')) || [];
+    const updatedOrders = [...existingOrders, order];
+    localStorage.setItem('orderHistory', JSON.stringify(updatedOrders));
+
+    const pointsEarned = Math.floor(totalAmount / 10000);
+    addRewardPoints(pointsEarned);
+
+    updateStockAfterOrder(cart);
+
+    addOrderToHistory(order);
+    setCart([]);
+
+    setSuccessMessage('Đơn hàng đã được xác nhận!');
+    setTimeout(() => {
+      setSuccessMessage('');
+      navigate('/orders');
+    }, 2000);
   };
 
   return (
@@ -162,6 +182,50 @@ const CheckoutPage = ({ cart, setCart, addOrderToHistory }) => {
           </Button>
         </CardContent>
       </Card>
+
+      <Card sx={{ mt: 5, padding: 3, borderRadius: '16px', boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)' }}>
+        <Typography variant="h5" sx={{ textAlign: 'center', fontWeight: 'bold', mb: 3, color: '#2e7d32' }}>
+          Phương thức thanh toán
+        </Typography>
+        <CardContent>
+          <RadioGroup
+            value={paymentMethod}
+            onChange={(e) => setPaymentMethod(e.target.value)}
+          >
+            <FormControlLabel value="cod" control={<Radio />} label="Thanh toán khi nhận hàng (COD)" />
+            <FormControlLabel value="paypal" control={<Radio />} label="PayPal" />
+            <FormControlLabel value="stripe" control={<Radio />} label="Thẻ tín dụng / Thẻ ghi nợ (Stripe)" />
+          </RadioGroup>
+        </CardContent>
+      </Card>
+
+      {paymentMethod === 'paypal' && (
+        <PayPalScriptProvider options={{ "client-id": "your_paypal_client_id" }}>
+          <PayPalButtons
+            style={{ layout: 'vertical' }}
+            createOrder={(data, actions) => {
+              return actions.order.create({
+                purchase_units: [{
+                  amount: {
+                    value: (finalAmount / 23000).toFixed(2) // Example conversion rate from VND to USD
+                  }
+                }]
+              });
+            }}
+            onApprove={(data, actions) => {
+              return actions.order.capture().then(() => {
+                handleOrderConfirmation();
+              });
+            }}
+          />
+        </PayPalScriptProvider>
+      )}
+
+      {paymentMethod === 'stripe' && (
+        <Elements stripe={stripePromise}>
+          <StripeCheckoutForm amount={finalAmount} onSuccess={handleOrderConfirmation} />
+        </Elements>
+      )}
 
       <Card sx={{ mt: 5, padding: 3, borderRadius: '16px', boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)' }}>
         <Typography variant="h5" sx={{ textAlign: 'center', fontWeight: 'bold', mb: 3, color: '#2e7d32' }}>
@@ -227,6 +291,7 @@ const CheckoutPage = ({ cart, setCart, addOrderToHistory }) => {
               variant="contained"
               onClick={handleCheckout}
               sx={{ bgcolor: '#2e7d32', borderRadius: '20px', padding: '10px 20px', fontWeight: 'bold' }}
+              disabled={isProcessingPayment}
             >
               Xác nhận đơn hàng
             </Button>

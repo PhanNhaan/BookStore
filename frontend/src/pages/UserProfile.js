@@ -31,11 +31,11 @@ const UserProfile = () => {
     const totalPoints = getTotalRewardPoints();
     setTotalRewardPoints(totalPoints);
 
+    const tier = getMembershipTier(totalPoints);
+    setMembershipTier(tier);
+
     const existingDiscountCode = getDiscountCode();
     setDiscountCode(existingDiscountCode);
-
-    const tier = getMembershipTier();
-    setMembershipTier(tier);
   }, []);
 
   const handleChange = (e) => {
@@ -93,6 +93,10 @@ const UserProfile = () => {
     const result = redeemRewardPoints(points);
     if (result.success) {
       setRewardPoints(result.newPoints);
+      const newTotalPoints = getTotalRewardPoints(); 
+      setTotalRewardPoints(newTotalPoints);
+      const updatedTier = getMembershipTier(newTotalPoints);
+      setMembershipTier(updatedTier);
       setDiscountCode(result.discountCode);
       setRedeemMessage(`Đổi điểm thành công! Bạn còn ${result.newPoints} điểm.`);
     } else {

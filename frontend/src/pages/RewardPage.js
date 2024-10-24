@@ -13,7 +13,9 @@ const RewardPage = () => {
     setRewardPoints(points);
 
     const existingDiscountCode = getDiscountCode();
-    setDiscountCode(existingDiscountCode);
+    if (existingDiscountCode) {
+      setDiscountCode(existingDiscountCode);
+    }
   }, []);
 
   const handleRedeemPoints = () => {
