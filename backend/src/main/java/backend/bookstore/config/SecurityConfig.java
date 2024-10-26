@@ -1,7 +1,6 @@
 package backend.bookstore.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -18,15 +17,14 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
 
-import javax.crypto.spec.SecretKeySpec;
-
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = false, jsr250Enabled = false)
 public class SecurityConfig {
     private final String[] PULIC_ENDPOINTS = {"/user/signup", "/user/checkusername", "/test",
-                                            "/auth/logout", "/auth/login", "/auth/refresh"};
+                                            "/auth/logout", "/auth/login", "/auth/refresh",
+                                                "/category", "/book/**", };
 
     @Autowired
     private CustomJwtDecoder jwtDecoder;

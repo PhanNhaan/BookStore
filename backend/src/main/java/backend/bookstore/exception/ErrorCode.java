@@ -19,6 +19,13 @@ public enum ErrorCode {
     UNAUTHORIZED(1007, "You do not have permission", HttpStatus.FORBIDDEN),
     EMAIL_EXISTED(1010, "Email existed", HttpStatus.BAD_REQUEST),
     PHONE_EXISTED(1011, "Phone existed", HttpStatus.BAD_REQUEST),
+    CATEGORY_NOT_EXISTED(1012, "Category not existed", HttpStatus.NOT_FOUND),
+    CATEGORY_EXISTED(1013, "Category existed", HttpStatus.BAD_REQUEST),
+    BOOK_EXISTED(1014, "Book existed", HttpStatus.BAD_REQUEST),
+    BOOK_NOT_EXISTED(1015, "Book not existed", HttpStatus.NOT_FOUND),
+    BOOK_DELETED(1016, "Book deleted", HttpStatus.BAD_REQUEST),
+    BOOK_NOT_DELETED(1017, "Book not deleted", HttpStatus.NOT_FOUND),
+    NOT_HAVE_CATRGORY(1018, "Not have category", HttpStatus.BAD_REQUEST),
     ;
 
     ErrorCode(int code, String message, HttpStatusCode statusCode) {
