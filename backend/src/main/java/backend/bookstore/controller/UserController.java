@@ -24,9 +24,9 @@ import java.util.List;
 import java.util.Optional;
 
 @Slf4j
-@RestController
-@RequestMapping("/user")
-@RequiredArgsConstructor
+    @RestController
+    @RequestMapping("/user")
+    @RequiredArgsConstructor
 public class UserController {
     @Autowired
     private AuthenticationService authenticationService;

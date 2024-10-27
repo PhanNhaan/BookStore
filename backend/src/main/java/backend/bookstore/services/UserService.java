@@ -94,6 +94,8 @@ public class UserService {
     }
 
     public void deleteUser(Long userId){
+        if (!userRepository.existsById(userId))
+            throw new AppException(ErrorCode.USER_NOT_EXISTED);
         userRepository.deleteById(userId);
     }
 }
