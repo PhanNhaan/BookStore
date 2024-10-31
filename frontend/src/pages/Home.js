@@ -21,7 +21,7 @@ const Home = ({ products, addToCart }) => {
       >
         <Box
           sx={{
-            backgroundColor: 'rgba(0, 0, 0, 0.4)', 
+            backgroundColor: 'rgba(0, 0, 0, 0.4)',
             position: 'absolute',
             top: 0,
             left: 0,
@@ -60,10 +60,10 @@ const Home = ({ products, addToCart }) => {
       <Typography variant="h4" sx={{ textAlign: 'center', mb: 3, color: '#2e7d32' }}>Featured Products</Typography>
 
       {products.length > 0 ? (
-        <Grid 
-          container 
-          spacing={4}  
-          justifyContent="center" 
+        <Grid
+          container
+          spacing={4}
+          justifyContent="center"
           sx={{ px: { xs: 3, sm: 5, md: 8, lg: 10 } }}
         >
           {products.map((product) => (

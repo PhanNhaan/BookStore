@@ -22,9 +22,9 @@ public class UserCreationRequest {
 //        ^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$
     String userEmail;
 //    @Size(min=10,max=10, message = "PHONE_INVALID")
-//    String userPhone;
+    String userPhone;
 //    String avatar;
-//    String gender;
+    String gender;
     String role;
 //    Date dob;
 }
