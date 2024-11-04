@@ -88,7 +88,7 @@ CREATE TABLE Users (
     dob DATE, -- Ngày sinh
     gender VARCHAR(10), -- Giới tính
     avatar VARCHAR(255), -- Ảnh đại diện (tùy chọn)
-    role VARCHAR(20) DEFAULT 'customer',
+    role VARCHAR(20) DEFAULT 'USER',
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );

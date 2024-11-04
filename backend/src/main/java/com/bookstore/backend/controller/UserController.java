@@ -39,7 +39,7 @@ public class UserController {
             throw new AppException(ErrorCode.USER_EXISTED);
 
         return ApiResponse.<String>builder()
-                .result("Ok")
+                .result("OK")
                 .build();
     }
 
