@@ -7,8 +7,10 @@ import com.bookstore.backend.exception.AppException;
 import com.bookstore.backend.exception.ErrorCode;
 import com.bookstore.backend.mapper.BookMapper;
 import com.bookstore.backend.model.Book;
+import com.bookstore.backend.model.Publisher;
 import com.bookstore.backend.repository.BookRepository;
 import com.bookstore.backend.repository.CategoryRepository;
+import com.bookstore.backend.repository.PublisherRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,6 +27,8 @@ public class BookService {
     private BookMapper bookMapper;
     @Autowired
     private CategoryRepository categoryRepository;
+    @Autowired
+    private PublisherRepository publisherRepository;
 
     public BookResponse createBook(BookCreateRequest request){
         if (bookRepository.existsByTitle(request.getTitle())){
@@ -37,6 +41,13 @@ public class BookService {
         if (categories.isEmpty()) throw new AppException(ErrorCode.NOT_HAVE_CATRGORY);
 
         book.setCategories(new HashSet<>(categories));
+
+        if (request.getPublisher() == null) throw new AppException(ErrorCode.NOT_HAVE_PUBLISHER);
+
+        var publisher = publisherRepository.findById(request.getPublisher()).orElseThrow(
+                () -> new AppException(ErrorCode.PUBLISHER_NOT_EXISTED)
+        );
+        book.setPublisher(publisher);
 
         return bookMapper.toBookResponse(bookRepository.save(book));
     }
@@ -109,6 +120,13 @@ public class BookService {
 //        HashSet<Category> categories = new HashSet<>();
 //        categoryRepository.findById(request.getCategories()).ifPresent(categories::add);
 
+        if (request.getPublisher() == null) throw new AppException(ErrorCode.NOT_HAVE_PUBLISHER);
+
+        var publisher = publisherRepository.findById(request.getPublisher()).orElseThrow(
+                () -> new AppException(ErrorCode.PUBLISHER_NOT_EXISTED)
+        );
+        book.setPublisher(publisher);
+
 
         return bookMapper.toBookResponse(bookRepository.save(book));
     }
@@ -121,5 +139,15 @@ public class BookService {
 
         return books.stream().map(bookMapper::toBookResponse).toList();
 
+    }
+
+    public List<BookResponse> getBookPublishers(String publisherName){
+        var publisher = publisherRepository.findByPublisherName(publisherName).orElseThrow(
+                () -> new AppException(ErrorCode.PUBLISHER_NOT_EXISTED)
+        );
+
+        var books = publisher.getBooks();
+
+        return books.stream().map(bookMapper::toBookResponse).toList();
     }
 }

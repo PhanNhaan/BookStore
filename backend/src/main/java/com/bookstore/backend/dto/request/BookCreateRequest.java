@@ -15,7 +15,7 @@ import java.util.Set;
 public class BookCreateRequest {
 //    Long bookId;
     String title;
-    //    Long publisher;
+    Long publisher;
     Long year;
     BigDecimal price;
     Long stock;

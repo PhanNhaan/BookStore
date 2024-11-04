@@ -1,6 +1,7 @@
 package com.bookstore.backend.dto.response;
 
 import com.bookstore.backend.model.Category;
+import com.bookstore.backend.model.Publisher;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -16,7 +17,7 @@ import java.util.Set;
 public class BookResponse {
     Long bookId;
     String title;
-    Long publisher;
+    Publisher publisher;
     Long year;
     BigDecimal price;
     Long stock;

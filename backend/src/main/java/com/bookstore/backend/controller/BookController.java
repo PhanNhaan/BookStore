@@ -89,4 +89,11 @@ public class BookController {
                 .build();
     }
 
+    @GetMapping("/publisher/{publisherName}")
+    public ApiResponse<List<BookResponse>> getBooksByPublisher(@PathVariable("publisherName") String publisherName){
+        return ApiResponse.<List<BookResponse>>builder()
+                .result(bookService.getBookPublishers(publisherName))
+                .build();
+    }
+
 }

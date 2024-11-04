@@ -26,6 +26,8 @@ public enum ErrorCode {
     BOOK_DELETED(1016, "Book deleted", HttpStatus.BAD_REQUEST),
     BOOK_NOT_DELETED(1017, "Book not deleted", HttpStatus.NOT_FOUND),
     NOT_HAVE_CATRGORY(1018, "Not have category", HttpStatus.BAD_REQUEST),
+    NOT_HAVE_PUBLISHER(1019, "Not have publisher", HttpStatus.BAD_REQUEST),
+    PUBLISHER_NOT_EXISTED(1020, "Publisher not existed", HttpStatus.NOT_FOUND),
     ;
 
     ErrorCode(int code, String message, HttpStatusCode statusCode) {

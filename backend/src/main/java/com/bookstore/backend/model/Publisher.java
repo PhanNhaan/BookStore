@@ -1,12 +1,13 @@
 package com.bookstore.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.util.Date;
+import java.util.Set;
 
-@Data
 @Builder
 @NoArgsConstructor
 @Getter
@@ -29,4 +30,8 @@ public class Publisher {
     Date createdAt;
     @Column(name = "updated_at")
     Date modifiedAt;
+
+    @OneToMany(mappedBy = "publisher")
+    @JsonBackReference
+    Set<Book> books;
 }
