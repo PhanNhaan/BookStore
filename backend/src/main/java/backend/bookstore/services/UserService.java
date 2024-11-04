@@ -2,6 +2,7 @@ package backend.bookstore.services;
 
 import backend.bookstore.dto.request.UserCreationRequest;
 import backend.bookstore.dto.request.UserLoginRequest;
+import backend.bookstore.dto.request.UserUpdateRequest;
 import backend.bookstore.dto.response.UserResponse;
 import backend.bookstore.exception.AppException;
 import backend.bookstore.exception.ErrorCode;
@@ -31,16 +32,23 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    public User creationUser(UserCreationRequest userCreation) {
+    public UserResponse creationUser(UserCreationRequest userCreation) {
         if (userRepository.existsByUserName(userCreation.getUserName()))
             throw new AppException(ErrorCode.USER_EXISTED);
+
+        if (userRepository.existsByUserEmail(userCreation.getUserEmail()))
+            throw new AppException(ErrorCode.EMAIL_EXISTED);
 
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
 
         User user = userMapper.toUser(userCreation);
         user.setPassword(passwordEncoder.encode(userCreation.getPassword()));
 
-        return userRepository.save(user);
+        return userMapper.toUserResponse(userRepository.save(user));
+    }
+
+    public boolean existsByUserName(String userName) {
+        return userRepository.existsByUserName(userName);
     }
 
     public UserResponse findUserByUsername(String username){
@@ -49,18 +57,15 @@ public class UserService {
         return userMapper.toUserResponse(user);
     }
 
-    @PostAuthorize("returnObject.userName == authentication.name")
+//    @PostAuthorize("returnObject.userName == authentication.name")
     public UserResponse getUser(String username){
 
-        UserResponse userResponse = userMapper.toUserResponse(userRepository.findByUserName(username)
+        return userMapper.toUserResponse(userRepository.findByUserName(username)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED)));
-        return userResponse;
     }
 
 //    @PreAuthorize("hasRole('ADMIN')")
     public List<UserResponse> getAllUsers(){
-//        log.info("1");
-        var user = userRepository.findAll().stream().map(userMapper::toUserResponse).toList();
 
         return userRepository.findAll().stream().map(userMapper::toUserResponse).toList();
     }
@@ -76,5 +81,21 @@ public class UserService {
             throw new AppException(ErrorCode.UNAUTHENTICATED);
 
         return user;
+    }
+
+//    @PostAuthorize("returnObject.userName == authentication.name or hasRole('ADMIN')")
+    public UserResponse updateUser(UserUpdateRequest userUpdate){
+        var user = userRepository.findById(userUpdate.getUserId()).orElseThrow(
+                () -> new AppException(ErrorCode.USER_NOT_EXISTED));
+
+        userMapper.updateUser(user, userUpdate);
+
+        return userMapper.toUserResponse(userRepository.save(user));
+    }
+
+    public void deleteUser(Long userId){
+        if (!userRepository.existsById(userId))
+            throw new AppException(ErrorCode.USER_NOT_EXISTED);
+        userRepository.deleteById(userId);
     }
 }

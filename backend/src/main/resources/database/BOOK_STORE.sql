@@ -36,7 +36,7 @@ CREATE TABLE Books (
     stock_quantity bigint DEFAULT 0,
     description TEXT,
     cover_image VARCHAR(255),
-    sale DECIMAL(5, 2) DEFAULT 0, -- % giảm giá
+    sale bigint DEFAULT 0, -- % giảm giá
     deleted BIT DEFAULT 0, -- Xóa mềm
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -88,7 +88,7 @@ CREATE TABLE Users (
     dob DATE, -- Ngày sinh
     gender VARCHAR(10), -- Giới tính
     avatar VARCHAR(255), -- Ảnh đại diện (tùy chọn)
-    role VARCHAR(20) DEFAULT 'customer',
+    role VARCHAR(20) DEFAULT 'USER',
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
@@ -144,15 +144,15 @@ CREATE TABLE Wishlist (
 );
 
 -- bảng Token
-CREATE TABLE Token (
-    token_id bigint not null auto_increment PRIMARY KEY,
-    user_id bigint,
-    token VARCHAR(255),
-    refresh_token VARCHAR(255),
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES Users(user_id)
-);
+-- CREATE TABLE Token (
+--     token_id bigint not null auto_increment PRIMARY KEY,
+--     user_id bigint,
+--     token VARCHAR(255),
+--     refresh_token VARCHAR(255),
+--     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+--     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+--     FOREIGN KEY (user_id) REFERENCES Users(user_id)
+-- );
 
 -- bảng Comments
 CREATE TABLE Comments (
@@ -176,10 +176,10 @@ CREATE TABLE Cart_Items (
     FOREIGN KEY (book_id) REFERENCES Books(book_id)
 );
 
-CREATE TABLE `invalidated_token` (
-    `id` varchar(255) NOT NULL,
-    `expiry_time` datetime(6) DEFAULT NULL
+CREATE TABLE invalidated_token (
+    id varchar(255) NOT NULL PRIMARY KEY,
+    expiry_time DATETIME DEFAULT NULL
 );
 
 
-CREATE EVENT delete_expired_rows ON SCHEDULE EVERY 1 DAY DO DELETE FROM invalidated_token WHERE expiry_time < NOW();
+CREATE EVENT delete_expired_rows ON SCHEDULE EVERY 1 DAY DO DELETE FROM invalidated_token WHERE expiry_time < CURRENT_TIMESTAMP;

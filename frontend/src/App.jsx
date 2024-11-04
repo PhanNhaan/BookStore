@@ -11,7 +11,9 @@ import BookPage from './pages/BookPage';
 import BookDetailPage from './pages/BookDetailPage';
 import CartPage from './pages/CartPage';
 import CheckoutPage from './pages/CheckoutPage';
-import LoginPage from './pages/LoginPage';
+// import LoginPage from './pages/LoginPage';
+import LoginPage from './components/login/login';
+import Register from './components/Register/Register';
 import OrderConfirmationPage from './pages/OrderConfirmationPage';
 import OrderHistoryPage from './pages/OrderHistoryPage';
 import OffersPage from './pages/OffersPage'; 
@@ -105,6 +107,7 @@ const App = () => {
           <Route path="/books/:id" element={<BookDetailPage addToCart={addToCart} />} />
           <Route path="/rewards" element={isAuthenticated ? <RewardPage /> : <Navigate to="/login" />} />
           <Route path="/login" element={<LoginPage setIsAuthenticated={setIsAuthenticated} setUserProfile={setUserProfile} />} />
+          <Route path="register" element={<Register />} />
           <Route
             path="/profile"
             element={

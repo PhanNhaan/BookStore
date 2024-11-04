@@ -14,17 +14,17 @@ import java.util.Date;
 public class UserCreationRequest {
 //    Long userId;
     String userName;
-    String fullName;
+//    String fullName;
     @Size(min = 8, message = "INVALID_PASSWORD")
     String password;
 //    String userAddress;
     @Email(message = "EMAIL_INVALID", regexp = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*\\.[a-zA-Z]{2,7}$")
 //        ^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$
     String userEmail;
-    @Size(min=10,max=10, message = "PHONE_INVALID")
+//    @Size(min=10,max=10, message = "PHONE_INVALID")
     String userPhone;
 //    String avatar;
     String gender;
     String role;
-    Date dob;
+//    Date dob;
 }

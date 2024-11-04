@@ -13,5 +13,9 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
+  graphql:
+    cors:
+      allowed-origins: ${CLIENT_HOST}
 jwt:
   signerKey: ${SIGNERKEY}
+
