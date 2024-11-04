@@ -5,17 +5,26 @@ server:
 
 spring:
   datasource:
-    url: "jdbc:mysql://${DATABASE_SERVER}:${DATABASE_PORT}/${DATABASE_NAME}"
+    url: "jdbc:mysql://${DATABASE_SERVER}:${DATABASE_PORT}/${DATABASE_NAME}?createDatabaseIfNotExist=true"
     driverClassName: "com.mysql.cj.jdbc.Driver"
     username: ${DATABASE_USERNAME}
     password: ${DATABASE_PASSWORD}
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: update #validate #none #
     show-sql: true
+#    properties:
+#      hibernate:
+#        format_sql: true
+#        dialect: org.hibernate.dialect.MySQL8Dialect
   graphql:
     cors:
       allowed-origins: ${CLIENT_HOST}
+  flyway:
+    locations: classpath:/db/migration
+    baseline-on-migrate: true
+    enabled: true
+    baseline-version: 0
 jwt:
   signerKey: ${SIGNERKEY}
 
