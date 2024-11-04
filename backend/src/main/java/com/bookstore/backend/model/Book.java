@@ -23,8 +23,13 @@ public class Book {
     Long bookId;
     @Column(name = "title")
     String title;
-    @Column(name = "publisher_id")
-    Long publisher;
+
+//    @Column(name = "publisher_id")
+    @ManyToOne
+    @JoinColumn(name = "publisher_id")
+    @JsonBackReference
+    Publisher publisher;
+
     @Column(name = "publication_year")
     Long year;
     @Column(name = "price")
