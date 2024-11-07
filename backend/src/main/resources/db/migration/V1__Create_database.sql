@@ -93,6 +93,7 @@ CREATE TABLE IF NOT EXISTS Users (
                        gender VARCHAR(10), -- Giới tính
                        avatar VARCHAR(255), -- Ảnh đại diện (tùy chọn)
                        role VARCHAR(20) DEFAULT 'USER',
+                        google_id VARCHAR(255),
                        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
