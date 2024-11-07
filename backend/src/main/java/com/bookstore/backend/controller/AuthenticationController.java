@@ -12,7 +12,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+import java.net.URLEncoder;
 import java.text.ParseException;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -69,5 +72,28 @@ public class AuthenticationController {
                 .result(result)
                 .build();
 
+    }
+
+    @PostMapping("/login_google")
+    public ApiResponse<LoginResponse> loginGoogle(@RequestParam(value = "code") String code) throws IOException {
+        Map<String, Object> userInfo = authenticationService.authenticateGoogle(code);
+
+        log.info("userInfo: "+ userInfo);
+
+        var userLogin = authenticationService.loginWithGoogle(userInfo);
+
+        var token = authenticationService.generateToken(userLogin);
+
+        var user = LoginResponse.builder()
+                .userId(userLogin.getUserId())
+                .userName(userLogin.getUserName())
+                .role(userLogin.getRole())
+                .token(token)
+                .token_type("Bearer")
+                .expire_in(authenticationService.extractExpiration(token))
+                .build();
+
+        return ApiResponse.<LoginResponse>builder()
+                .result(user).build();
     }
 }
