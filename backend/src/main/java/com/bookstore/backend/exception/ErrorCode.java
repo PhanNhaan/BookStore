@@ -28,6 +28,7 @@ public enum ErrorCode {
     NOT_HAVE_CATRGORY(1018, "Not have category", HttpStatus.BAD_REQUEST),
     NOT_HAVE_PUBLISHER(1019, "Not have publisher", HttpStatus.BAD_REQUEST),
     PUBLISHER_NOT_EXISTED(1020, "Publisher not existed", HttpStatus.NOT_FOUND),
+    NOT_FOUND(1021, "Not found", HttpStatus.NOT_FOUND),
     ;
 
     ErrorCode(int code, String message, HttpStatusCode statusCode) {

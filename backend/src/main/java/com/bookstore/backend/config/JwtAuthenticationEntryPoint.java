@@ -1,6 +1,6 @@
 package com.bookstore.backend.config;
 
-import com.bookstore.backend.dto.response.ApiResponse;
+import com.bookstore.backend.dto.ApiResponse;
 import com.bookstore.backend.exception.ErrorCode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;

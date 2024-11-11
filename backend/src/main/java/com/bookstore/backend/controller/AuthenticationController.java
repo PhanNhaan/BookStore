@@ -2,7 +2,7 @@ package com.bookstore.backend.controller;
 
 import com.bookstore.backend.dto.request.TokenRequest;
 import com.bookstore.backend.dto.request.UserLoginRequest;
-import com.bookstore.backend.dto.response.ApiResponse;
+import com.bookstore.backend.dto.ApiResponse;
 import com.bookstore.backend.dto.response.LoginResponse;
 import com.bookstore.backend.mapper.UserMapper;
 import com.bookstore.backend.services.AuthenticationService;
@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.net.URLEncoder;
 import java.text.ParseException;
 import java.util.Map;
 

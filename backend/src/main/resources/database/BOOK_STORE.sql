@@ -1,5 +1,5 @@
 ﻿-- Tạo bảng Publishers
-CREATE TABLE Publishers (
+CREATE TABLE publishers (
     publisher_id bigint not null auto_increment PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     address VARCHAR(255),
@@ -9,7 +9,7 @@ CREATE TABLE Publishers (
 );
 
 -- Tạo bảng Categories
-CREATE TABLE Categories (
+CREATE TABLE categories (
     category_id bigint not null auto_increment PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     description TEXT,
@@ -18,7 +18,7 @@ CREATE TABLE Categories (
 );
 
 -- Tạo bảng Authors
-CREATE TABLE Authors (
+CREATE TABLE authors (
     author_id bigint not null auto_increment PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     bio TEXT,
@@ -27,7 +27,7 @@ CREATE TABLE Authors (
 );
 
 -- Tạo bảng Books
-CREATE TABLE Books (
+CREATE TABLE books (
     book_id bigint not null auto_increment PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
     publisher_id bigint,
@@ -44,7 +44,7 @@ CREATE TABLE Books (
 );
 
 -- Tạo bảng Promotions
-CREATE TABLE Promotions (
+CREATE TABLE promotions (
     promotion_id bigint not null auto_increment PRIMARY KEY,
     code VARCHAR(50) NOT NULL UNIQUE,
     description TEXT,
@@ -59,7 +59,7 @@ CREATE TABLE Promotions (
 );
 
 -- Tạo bảng liên kết Book_Authors 
-CREATE TABLE Book_Authors (
+CREATE TABLE book_Authors (
     book_id bigint,
     author_id bigint,
     PRIMARY KEY (book_id, author_id),
@@ -68,7 +68,7 @@ CREATE TABLE Book_Authors (
 );
 
 -- Tạo bảng liên kết Book_Categories 
-CREATE TABLE Book_Categories (
+CREATE TABLE book_categories (
     book_id bigint,
     category_id bigint,
     PRIMARY KEY (book_id, category_id),
@@ -77,7 +77,7 @@ CREATE TABLE Book_Categories (
 );
 
 --  bảng Users
-CREATE TABLE Users (
+CREATE TABLE users (
     user_id bigint not null auto_increment PRIMARY KEY,
     username VARCHAR(50) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
@@ -94,7 +94,7 @@ CREATE TABLE Users (
 );
 
 --  bảng Orders
-CREATE TABLE Orders (
+CREATE TABLE orders (
     order_id bigint not null auto_increment PRIMARY KEY,
     user_id bigint,
     promotion_id bigint,  -- Khóa ngoại cho khuyến mãi
@@ -110,7 +110,7 @@ CREATE TABLE Orders (
 );
 
 --  bảng Order_Items 
-CREATE TABLE Order_Items (
+CREATE TABLE order_items (
     order_id bigint,
     book_id bigint,
     price DECIMAL(10, 2) NOT NULL, -- Giá sách
@@ -121,7 +121,7 @@ CREATE TABLE Order_Items (
 );
 
 -- bảng Reviews
-CREATE TABLE Reviews (
+CREATE TABLE reviews (
     review_id bigint not null auto_increment PRIMARY KEY,
     book_id bigint,
     user_id bigint,
@@ -133,7 +133,7 @@ CREATE TABLE Reviews (
 );
 
 -- bảng Wishlist
-CREATE TABLE Wishlist (
+CREATE TABLE wishlist (
     wishlist_id bigint not null auto_increment PRIMARY KEY,
     user_id bigint,
     book_id bigint,
@@ -155,7 +155,7 @@ CREATE TABLE Wishlist (
 -- );
 
 -- bảng Comments
-CREATE TABLE Comments (
+CREATE TABLE comments (
     comment_id bigint not null auto_increment PRIMARY KEY,
     user_id bigint,
     book_id bigint,
@@ -167,7 +167,7 @@ CREATE TABLE Comments (
 );
 
 -- bảng Cart_Items (dùng khóa kép cart_id và book_id)
-CREATE TABLE Cart_Items (
+CREATE TABLE cart_items (
     user_id bigint,
     book_id bigint,
     quantity bigint NOT NULL,

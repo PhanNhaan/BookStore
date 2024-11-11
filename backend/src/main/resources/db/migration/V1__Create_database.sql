@@ -3,7 +3,7 @@
 -- USE book_store_test;
 
 -- Tạo bảng Publishers
-CREATE TABLE IF NOT EXISTS Publishers (
+CREATE TABLE IF NOT EXISTS publishers (
                             publisher_id bigint not null auto_increment PRIMARY KEY,
                             name VARCHAR(255) UNIQUE NOT NULL,
                             address VARCHAR(255),
@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS Publishers (
 );
 
 -- Tạo bảng Categories
-CREATE TABLE IF NOT EXISTS Categories (
+CREATE TABLE IF NOT EXISTS categories (
                             category_id bigint not null auto_increment PRIMARY KEY,
                             name VARCHAR(100) UNIQUE NOT NULL,
                             description TEXT,
@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS Categories (
 );
 
 -- Tạo bảng Authors
-CREATE TABLE IF NOT EXISTS Authors (
+CREATE TABLE IF NOT EXISTS authors (
                          author_id bigint not null auto_increment PRIMARY KEY,
                          name VARCHAR(255) NOT NULL,
                          bio TEXT,
@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS Authors (
 );
 
 -- Tạo bảng Books
-CREATE TABLE IF NOT EXISTS Books (
+CREATE TABLE IF NOT EXISTS books (
                        book_id bigint not null auto_increment PRIMARY KEY,
                        title VARCHAR(255) UNIQUE NOT NULL,
                        publisher_id bigint,
@@ -44,11 +44,11 @@ CREATE TABLE IF NOT EXISTS Books (
                        deleted BIT DEFAULT 0, -- Xóa mềm
                        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                       FOREIGN KEY (publisher_id) REFERENCES Publishers(publisher_id)
+                       FOREIGN KEY (publisher_id) REFERENCES publishers(publisher_id)
 );
 
 -- Tạo bảng Promotions
-CREATE TABLE IF NOT EXISTS Promotions (
+CREATE TABLE IF NOT EXISTS promotions (
                             promotion_id bigint not null auto_increment PRIMARY KEY,
                             code VARCHAR(50) NOT NULL UNIQUE,
                             description TEXT,
@@ -63,12 +63,12 @@ CREATE TABLE IF NOT EXISTS Promotions (
 );
 
 -- Tạo bảng liên kết Book_Authors
-CREATE TABLE IF NOT EXISTS Book_Authors (
+CREATE TABLE IF NOT EXISTS book_authors (
                               book_id bigint,
                               author_id bigint,
                               PRIMARY KEY (book_id, author_id),
-                              FOREIGN KEY (book_id) REFERENCES Books(book_id),
-                              FOREIGN KEY (author_id) REFERENCES Authors(author_id)
+                              FOREIGN KEY (book_id) REFERENCES books(book_id),
+                              FOREIGN KEY (author_id) REFERENCES authors(author_id)
 );
 
 -- Tạo bảng liên kết Book_Categories
@@ -76,12 +76,12 @@ CREATE TABLE IF NOT EXISTS book_categories (
                                  book_id bigint,
                                  category_id bigint,
                                  PRIMARY KEY (book_id, category_id),
-                                 FOREIGN KEY (book_id) REFERENCES Books(book_id),
-                                 FOREIGN KEY (category_id) REFERENCES Categories(category_id)
+                                 FOREIGN KEY (book_id) REFERENCES books(book_id),
+                                 FOREIGN KEY (category_id) REFERENCES categories(category_id)
 );
 
 --  bảng Users
-CREATE TABLE IF NOT EXISTS Users (
+CREATE TABLE IF NOT EXISTS users (
                        user_id bigint not null auto_increment PRIMARY KEY,
                        username VARCHAR(50) NOT NULL UNIQUE,
                        password VARCHAR(255) NOT NULL,
@@ -99,7 +99,7 @@ CREATE TABLE IF NOT EXISTS Users (
 );
 
 --  bảng Orders
-CREATE TABLE IF NOT EXISTS Orders (
+CREATE TABLE IF NOT EXISTS orders (
                         order_id bigint not null auto_increment PRIMARY KEY,
                         user_id bigint,
                         promotion_id bigint,  -- Khóa ngoại cho khuyến mãi
@@ -110,42 +110,42 @@ CREATE TABLE IF NOT EXISTS Orders (
                         payment_method VARCHAR(50),
                         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                        FOREIGN KEY (user_id) REFERENCES Users(user_id),
-                        FOREIGN KEY (promotion_id) REFERENCES Promotions(promotion_id)
+                        FOREIGN KEY (user_id) REFERENCES users(user_id),
+                        FOREIGN KEY (promotion_id) REFERENCES promotions(promotion_id)
 );
 
 --  bảng Order_Items
-CREATE TABLE IF NOT EXISTS Order_Items (
+CREATE TABLE IF NOT EXISTS order_items (
                              order_id bigint,
                              book_id bigint,
                              price DECIMAL(10, 2) NOT NULL, -- Giá sách
                              quantity bigint NOT NULL, -- Số lượng sách
                              PRIMARY KEY (order_id, book_id),
-                             FOREIGN KEY (order_id) REFERENCES Orders(order_id),
-                             FOREIGN KEY (book_id) REFERENCES Books(book_id)
+                             FOREIGN KEY (order_id) REFERENCES orders(order_id),
+                             FOREIGN KEY (book_id) REFERENCES books(book_id)
 );
 
 -- bảng Reviews
-CREATE TABLE IF NOT EXISTS Reviews (
+CREATE TABLE IF NOT EXISTS reviews (
                          review_id bigint not null auto_increment PRIMARY KEY,
                          book_id bigint,
                          user_id bigint,
                          rating bigint CHECK (rating BETWEEN 1 AND 5),
                          comment TEXT,
                          review_date DATETIME DEFAULT CURRENT_TIMESTAMP,
-                         FOREIGN KEY (book_id) REFERENCES Books(book_id),
-                         FOREIGN KEY (user_id) REFERENCES Users(user_id)
+                         FOREIGN KEY (book_id) REFERENCES books(book_id),
+                         FOREIGN KEY (user_id) REFERENCES users(user_id)
 );
 
 -- bảng Wishlist
-CREATE TABLE IF NOT EXISTS Wishlist (
+CREATE TABLE IF NOT EXISTS wishlist (
                           wishlist_id bigint not null auto_increment PRIMARY KEY,
                           user_id bigint,
                           book_id bigint,
                           created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                           updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                          FOREIGN KEY (user_id) REFERENCES Users(user_id),
-                          FOREIGN KEY (book_id) REFERENCES Books(book_id)
+                          FOREIGN KEY (user_id) REFERENCES users(user_id),
+                          FOREIGN KEY (book_id) REFERENCES books(book_id)
 );
 
 -- bảng Token
@@ -160,25 +160,25 @@ CREATE TABLE IF NOT EXISTS Wishlist (
 -- );
 
 -- bảng Comments
-CREATE TABLE IF NOT EXISTS Comments (
+CREATE TABLE IF NOT EXISTS comments (
                           comment_id bigint not null auto_increment PRIMARY KEY,
                           user_id bigint,
                           book_id bigint,
                           comment TEXT,
                           created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                           updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                          FOREIGN KEY (user_id) REFERENCES Users(user_id),
-                          FOREIGN KEY (book_id) REFERENCES Books(book_id)
+                          FOREIGN KEY (user_id) REFERENCES users(user_id),
+                          FOREIGN KEY (book_id) REFERENCES books(book_id)
 );
 
 -- bảng Cart_Items (dùng khóa kép cart_id và book_id)
-CREATE TABLE IF NOT EXISTS Cart_Items (
+CREATE TABLE IF NOT EXISTS cart_items (
                             user_id bigint,
                             book_id bigint,
                             quantity bigint NOT NULL,
                             PRIMARY KEY (user_id, book_id),
-                            FOREIGN KEY (user_id) REFERENCES Users(user_id), -- Quan hệ 1:1 nên dùng user_id thay vì cart_id
-                            FOREIGN KEY (book_id) REFERENCES Books(book_id)
+                            FOREIGN KEY (user_id) REFERENCES users(user_id), -- Quan hệ 1:1 nên dùng user_id thay vì cart_id
+                            FOREIGN KEY (book_id) REFERENCES books(book_id)
 );
 
 CREATE TABLE IF NOT EXISTS invalidated_token (

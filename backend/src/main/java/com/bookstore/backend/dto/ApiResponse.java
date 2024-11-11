@@ -1,4 +1,4 @@
-package com.bookstore.backend.dto.response;
+package com.bookstore.backend.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;

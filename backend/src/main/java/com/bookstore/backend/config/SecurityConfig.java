@@ -23,7 +23,7 @@ import org.springframework.web.filter.CorsFilter;
 @EnableMethodSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = false, jsr250Enabled = false)
 public class SecurityConfig {
-    private final String[] PULIC_ENDPOINTS = {"/user/signup", "/user/checkusername", "/test",
+    private final String[] PULIC_ENDPOINTS = {"/user/signup", "/user/checkusername", "/test/**",
                                             "/auth/logout", "/auth/login", "/auth/refresh","/auth/**",
                                                 "/category", "/book/**", };
 

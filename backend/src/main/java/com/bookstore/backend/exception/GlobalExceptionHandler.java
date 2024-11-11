@@ -1,6 +1,6 @@
 package com.bookstore.backend.exception;
 
-import com.bookstore.backend.dto.response.ApiResponse;
+import com.bookstore.backend.dto.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;

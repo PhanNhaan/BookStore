@@ -2,7 +2,7 @@ package com.bookstore.backend.controller;
 
 import com.bookstore.backend.dto.request.UserCreationRequest;
 import com.bookstore.backend.dto.request.UserUpdateRequest;
-import com.bookstore.backend.dto.response.ApiResponse;
+import com.bookstore.backend.dto.ApiResponse;
 import com.bookstore.backend.dto.response.UserResponse;
 import com.bookstore.backend.exception.AppException;
 import com.bookstore.backend.exception.ErrorCode;

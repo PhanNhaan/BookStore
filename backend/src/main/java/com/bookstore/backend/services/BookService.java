@@ -12,12 +12,14 @@ import com.bookstore.backend.repository.BookRepository;
 import com.bookstore.backend.repository.CategoryRepository;
 import com.bookstore.backend.repository.PublisherRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class BookService {
@@ -59,8 +61,15 @@ public class BookService {
         return bookMapper.toBookResponse(book);
     }
 
+    public List<BookResponse> searchBook(int page, String search, int limit){
+        if(page<1) return null;
+        int offset = (page - 1) * limit;
+        return bookRepository.search(search).stream().filter(book-> !book.isDeleted()).skip(offset).limit(limit).map(bookMapper::toBookResponse).toList();
+    }
+
     public List<BookResponse> getAllBooks(){
-        var books = bookRepository.findAll();
+//        var books = bookRepository.findAll();
+//        log.info("getAllBooks");
         return bookRepository.findAll().stream().filter(book-> !book.isDeleted()).map(bookMapper::toBookResponse).toList();
     }
 
@@ -131,23 +140,28 @@ public class BookService {
         return bookMapper.toBookResponse(bookRepository.save(book));
     }
 
-    public List<BookResponse> getBookCategories(String categorieName){
+    public List<BookResponse> getBookCategories(String categorieName, int page, int limit){
 //        HashSet<Book> books = new HashSet<>();
+        if(page<1) return null;
+        int offset = (page - 1) * limit;
         var category = categoryRepository.findByCategoryName(categorieName).orElseThrow(
                 () -> new AppException(ErrorCode.CATEGORY_NOT_EXISTED));
         var books = category.getBooks();
 
-        return books.stream().map(bookMapper::toBookResponse).toList();
+        return books.stream().filter(book-> !book.isDeleted()).skip(offset).limit(limit).map(bookMapper::toBookResponse).toList();
 
     }
 
-    public List<BookResponse> getBookPublishers(String publisherName){
+    public List<BookResponse> getBookPublishers(String publisherName, int page, int limit){
+        if(page<1) return null;
+        int offset = (page - 1) * limit;
+
         var publisher = publisherRepository.findByPublisherName(publisherName).orElseThrow(
                 () -> new AppException(ErrorCode.PUBLISHER_NOT_EXISTED)
         );
 
         var books = publisher.getBooks();
 
-        return books.stream().map(bookMapper::toBookResponse).toList();
+        return books.stream().filter(book-> !book.isDeleted()).skip(offset).limit(limit).map(bookMapper::toBookResponse).toList();
     }
 }

@@ -1,8 +1,15 @@
 import React from 'react';
 import { Box, Grid, Button, Typography, Card, CardContent, CardMedia } from '@mui/material';
 import bannerImage from '../assets/images/banner.jpg';
+import { useState, useEffect } from "react";
 
 const Home = ({ products, addToCart }) => {
+  useEffect(() => {
+    if (document.referrer !== window.location.href) {
+      window.location.reload();
+    }
+  }, [])
+
   return (
     <Box sx={{ mt: 5 }}>
       <Box

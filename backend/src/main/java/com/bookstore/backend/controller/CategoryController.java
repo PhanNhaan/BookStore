@@ -1,7 +1,7 @@
 package com.bookstore.backend.controller;
 
 import com.bookstore.backend.dto.request.CategoryCreationRequest;
-import com.bookstore.backend.dto.response.ApiResponse;
+import com.bookstore.backend.dto.ApiResponse;
 import com.bookstore.backend.dto.response.CategoryResponse;
 import com.bookstore.backend.services.CategoryService;
 import lombok.RequiredArgsConstructor;
