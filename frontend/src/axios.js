@@ -6,4 +6,9 @@ const instance = axios.create({
     withCredentials: true
 });
 
+instance.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('authToken')}`;
+
+// Alternatively, set other headers you may need for all requests
+instance.defaults.headers.common['Content-Type'] = 'application/json';
+
 export default instance;

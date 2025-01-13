@@ -13,10 +13,6 @@ spring:
     hibernate:
       ddl-auto: update #validate #none #
     show-sql: true
-#    properties:
-#      hibernate:
-#        format_sql: true
-#        dialect: org.hibernate.dialect.MySQL8Dialect
   graphql:
     cors:
       allowed-origins: ${CLIENT_HOST}
@@ -25,6 +21,15 @@ spring:
     baseline-on-migrate: true
     enabled: true
     baseline-version: 0
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${CLIENT_ID}
+            client-secret: ${CLIENT_SECRET}
+            redirect-uri: ${REDIRECT_URI:http://localhost:3000/oauth2/redirect}
+            user-info-uri: ${USER_INFO_URI:https://www.googleapis.com/oauth2/v1/userinfo}
 jwt:
   signerKey: ${SIGNERKEY}
 

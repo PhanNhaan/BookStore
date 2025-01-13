@@ -42,4 +42,6 @@ public class User{
     Date createdAt;
     @Column(name = "updated_at")
     Date modifiedAt;
+    @Column(name = "google_id")
+    String googleId;
 }

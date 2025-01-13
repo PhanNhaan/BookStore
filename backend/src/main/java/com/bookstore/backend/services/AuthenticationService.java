@@ -7,25 +7,38 @@ import com.bookstore.backend.model.InvalidatedToken;
 import com.bookstore.backend.model.User;
 import com.bookstore.backend.repository.InvalidatedTokenRepository;
 import com.bookstore.backend.repository.UserRepository;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.gson.GsonFactory;
+import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeTokenRequest;
+
+
 import com.nimbusds.jose.JOSEException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.*;
 import java.util.function.Function;
+
+//import static org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames.REDIRECT_URI;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService {
-
-
     public AuthenticationService(InvalidatedTokenRepository invalidatedTokenRepository) {
         this.invalidatedTokenRepository = invalidatedTokenRepository;
     }
@@ -33,6 +46,18 @@ public class AuthenticationService {
     private UserRepository userRepository;
     @Autowired
     private InvalidatedTokenRepository invalidatedTokenRepository;
+
+    @Value("${spring.security.oauth2.client.registration.google.client-id}")
+    private String clientId;
+
+    @Value("${spring.security.oauth2.client.registration.google.client-secret}")
+    private String clientSecret;
+
+    @Value("${spring.security.oauth2.client.registration.google.redirect-uri}")
+    private String redirectUri;
+
+    @Value("${spring.security.oauth2.client.registration.google.user-info-uri}")
+    private String userInfoUri;
 
     @Value("${jwt.signerKey}")
     private String SECRET_KEY;
@@ -97,7 +122,6 @@ public class AuthenticationService {
 
         return isValid;
     }
-
 
     private Claims verifyToken(String token, boolean isRefresh)  throws JOSEException, ParseException {
         JwtParser jwtParser  =Jwts.parserBuilder()
@@ -179,5 +203,54 @@ public class AuthenticationService {
                 .token_type("Bearer")
                 .expire_in(extractExpiration(newToken))
                 .build();
+    }
+
+    public Map<String, Object> authenticateGoogle(String code) throws IOException {
+        RestTemplate restTemplate = new RestTemplate();
+        restTemplate.setRequestFactory(new HttpComponentsClientHttpRequestFactory());
+
+        String accessToken = new GoogleAuthorizationCodeTokenRequest(
+                new NetHttpTransport(),new GsonFactory(),
+                clientId,
+                clientSecret,
+                code,
+                redirectUri
+        ).execute().getAccessToken();
+
+        restTemplate.getInterceptors().add((req, body, executionContext) -> {
+            req.getHeaders().add("Authorization", "Bearer " + accessToken);
+            return executionContext.execute(req,body);
+        });
+
+        return new ObjectMapper().readValue(
+                restTemplate.getForEntity(userInfoUri, String.class).getBody(),
+                new TypeReference<>() {});
+        }
+
+    public User loginWithGoogle(Map<String, Object> userInfo) {
+        String password = RandomStringUtils.randomAlphanumeric(8);
+
+        log.info(password);
+
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
+
+        var user = userRepository.findByUserEmail(userInfo.get("email").toString()).orElseGet(
+                ()-> userRepository.save(User.builder()
+                        .userName(userInfo.get("email").toString())
+                        .fullName(userInfo.get("name").toString())
+                        .googleId(userInfo.get("id").toString())
+                        .userEmail(userInfo.get("email").toString())
+                        .avatar(userInfo.get("picture").toString())
+                        .password(passwordEncoder.encode(password))
+                        .role("USER")
+                        .build())
+        );
+
+        if (user.getGoogleId().isEmpty()) {
+            user.setGoogleId(userInfo.get("id").toString());
+            userRepository.save(user);
+        }
+
+        return user;
     }
 }

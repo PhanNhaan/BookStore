@@ -19,6 +19,7 @@ import OrderHistoryPage from './pages/OrderHistoryPage';
 import OffersPage from './pages/OffersPage'; 
 import './index.css';
 import RewardPage from './pages/RewardPage';
+import Authenticate from "./components/Authenticate";
 import { products as initialProducts } from './data/products';
 import './styles/style.css';
 
@@ -128,6 +129,7 @@ const App = () => {
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/terms-of-service" element={<TermsOfService />} />
           <Route path="/contact" element={<ContactPage />} />
+          <Route path="/oauth2/redirect" element={<Authenticate />} />
         </Routes>
       </main>
 

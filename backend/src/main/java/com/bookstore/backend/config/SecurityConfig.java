@@ -24,7 +24,7 @@ import org.springframework.web.filter.CorsFilter;
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = false, jsr250Enabled = false)
 public class SecurityConfig {
     private final String[] PULIC_ENDPOINTS = {"/user/signup", "/user/checkusername", "/test",
-                                            "/auth/logout", "/auth/login", "/auth/refresh",
+                                            "/auth/logout", "/auth/login", "/auth/refresh","/auth/**",
                                                 "/category", "/book/**", };
 
     @Value("${spring.graphql.cors.allowed-origins}")
@@ -48,6 +48,7 @@ public class SecurityConfig {
         );
 
         http.csrf(AbstractHttpConfigurer::disable);
+//        http.oauth2Login();
 
         return http.build();
     }
